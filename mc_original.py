@@ -1,12 +1,5 @@
 import main
 
-GRASS = main.GRASS
-SAND = main.SAND
-BRICK = main.BRICK
-STONE = main.STONE
-OAK_WOOD = main.OAK_WOOD
-OAK_LEAVES = main.OAK_LEAVES
-
 class World (main.Window):
 
   def __init__(self):
