@@ -74,6 +74,8 @@ GRASS = tex_coords((1, 0), (0, 1), (0, 0))
 SAND = tex_coords((1, 1), (1, 1), (1, 1))
 BRICK = tex_coords((2, 0), (2, 0), (2, 0))
 STONE = tex_coords((2, 1), (2, 1), (2, 1))
+OAK_WOOD = tex_coords((1, 2), (1, 2), (0, 2))
+OAK_LEAVES = GRASS
 
 FACES = [
     ( 0, 1, 0),
@@ -480,7 +482,7 @@ class Window(pyglet.window.Window):
         self.dy = 0
 
         # A list of blocks the player can place. Hit num keys to cycle.
-        self.inventory = [BRICK, GRASS, SAND]
+        self.inventory = [BRICK, GRASS, SAND, OAK_WOOD, OAK_LEAVES]
 
         # The current block the user can place. Hit num keys to cycle.
         self.block = self.inventory[0]
