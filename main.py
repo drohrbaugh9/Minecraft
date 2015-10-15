@@ -514,7 +514,7 @@ class Window(pyglet.window.Window):
 
     def set_max_jump_height(self, height):
       self.max_jump_height = height
-      self.jump_speed = math.sqrt(2 * self.gravity * self.max_jump_height)
+      JUMP_SPEED = math.sqrt(2 * GRAVITY * self.max_jump_height)
 
     def set_player_height(self, height):
       self.player_height = height
@@ -618,8 +618,8 @@ class Window(pyglet.window.Window):
             # Update your vertical speed: if you are falling, speed up until you
             # hit terminal velocity; if you are jumping, slow down until you
             # start falling.
-            self.dy -= dt * self.gravity
-            self.dy = max(self.dy, -(self.terminal_velocity))
+            self.dy -= dt * GRAVITY
+            self.dy = max(self.dy, -(TERMINAL_VELOCITY))
             dy += self.dy * dt
         # collisions
         x, y, z = self.position
