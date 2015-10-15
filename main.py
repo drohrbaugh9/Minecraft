@@ -75,7 +75,7 @@ SAND = tex_coords((1, 1), (1, 1), (1, 1))
 BRICK = tex_coords((2, 0), (2, 0), (2, 0))
 STONE = tex_coords((2, 1), (2, 1), (2, 1))
 OAK_WOOD = tex_coords((1, 2), (1, 2), (0, 2))
-OAK_LEAVES = GRASS
+OAK_LEAVES = tex_coords((2, 2), (2, 2), (2, 2))
 
 FACES = [
     ( 0, 1, 0),
@@ -436,13 +436,7 @@ class Window(pyglet.window.Window):
 
         self.flying_speed = FLYING_SPEED
 
-        self.gravity = GRAVITY
-
         self.max_jump_height = MAX_JUMP_HEIGHT
-
-        self.jump_speed = JUMP_SPEED
-
-        self.terminal_velocity = TERMINAL_VELOCITY
 
         self.player_height = PLAYER_HEIGHT
 
@@ -518,19 +512,9 @@ class Window(pyglet.window.Window):
     def set_flying_speed(self, speed):
       self.flying_speed = speed
 
-    def set_gravity(self, g):
-      self.gravity = g
-      self.jump_speed = math.sqrt(2 * self.gravity * self.max_jump_height)
-
     def set_max_jump_height(self, height):
       self.max_jump_height = height
       self.jump_speed = math.sqrt(2 * self.gravity * self.max_jump_height)
-
-    def set_jump_speed(self, speed):
-      self.jump_speed = speed
-
-    def set_terminal_velocity(self, velocity):
-      self.terminal_velocity = velocity
 
     def set_player_height(self, height):
       self.player_height = height
