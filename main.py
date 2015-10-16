@@ -13,6 +13,8 @@ TICKS_PER_SEC = 60
 # Size of sectors used to ease block loading.
 SECTOR_SIZE = 16
 
+WORLD_SIZE = 160
+
 WALKING_SPEED = 5
 FLYING_SPEED = 15
 
@@ -155,7 +157,8 @@ class Model(object):
         """ Initialize the world by placing all the blocks.
 
         """
-        n = 80  # 1/2 width and height of world
+        #n = 80  # 1/2 width and height of world
+		n = WORLD_SIZE / 2
         s = 1  # step size
         y = 0  # initial y height
         for x in xrange(-n, n + 1, s):
@@ -163,10 +166,12 @@ class Model(object):
                 # create a layer stone an grass everywhere.
                 self.add_block((x, y - 2, z), GRASS, immediate=False)
                 self.add_block((x, y - 3, z), STONE, immediate=False)
+				"""
                 if x in (-n, n) or z in (-n, n):
                     # create outer walls.
                     for dy in xrange(-2, 3):
                         self.add_block((x, y + dy, z), STONE, immediate=False)
+				"""
 
         # generate the hills randomly
         o = n - 10
@@ -649,6 +654,10 @@ class Window(pyglet.window.Window):
         # tall grass. If >= .5, you'll fall through the ground.
         pad = 0.25
         p = list(position)
+		if p[1] > (WORLD_SIZE / 2):
+			self.dx = 0;
+		if p[3] > (WORLD_SIZE / 2):
+			self.dz = 0;
         np = normalize(position)
         for face in FACES:  # check all surrounding blocks
             for i in xrange(3):  # check each dimension independently
