@@ -158,7 +158,7 @@ class Model(object):
 
         """
         #n = 80  # 1/2 width and height of world
-		n = WORLD_SIZE / 2
+	n = WORLD_SIZE / 2
         s = 1  # step size
         y = 0  # initial y height
         for x in xrange(-n, n + 1, s):
@@ -166,14 +166,15 @@ class Model(object):
                 # create a layer stone an grass everywhere.
                 self.add_block((x, y - 2, z), GRASS, immediate=False)
                 self.add_block((x, y - 3, z), STONE, immediate=False)
-				"""
+		"""
                 if x in (-n, n) or z in (-n, n):
                     # create outer walls.
                     for dy in xrange(-2, 3):
                         self.add_block((x, y + dy, z), STONE, immediate=False)
-				"""
+		"""
 
         # generate the hills randomly
+	"""
         o = n - 10
         for _ in xrange(120):
             a = random.randint(-o, o)  # x position of the hill
@@ -192,6 +193,7 @@ class Model(object):
                             continue
                         self.add_block((x, y, z), t, immediate=False)
                 s -= d  # decrement side lenth so hills taper off
+	"""
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
@@ -477,6 +479,12 @@ class Window(pyglet.window.Window):
         # The crosshairs at the center of the screen.
         self.reticle = None
 
+	# Velocity in the x direction.
+	self.dx = 0
+	
+	# Velocity in the z direction.
+	self.dz = 0
+	
         # Velocity in the y (upward) direction.
         self.dy = 0
 
@@ -654,11 +662,11 @@ class Window(pyglet.window.Window):
         # tall grass. If >= .5, you'll fall through the ground.
         pad = 0.25
         p = list(position)
-		if p[1] > (WORLD_SIZE / 2):
-			self.dx = 0;
-		if p[3] > (WORLD_SIZE / 2):
-			self.dz = 0;
         np = normalize(position)
+	if (abs(p[0]) > (WORLD_SIZE / 2) + 0.25):
+		p[0] = (WORLD_SIZE / 2) + 0.25
+	if (abs(p[2]) > (WORLD_SIZE / 2) + 0.25):
+		p[2] = (WORLD_SIZE / 2) + 0.25
         for face in FACES:  # check all surrounding blocks
             for i in xrange(3):  # check each dimension independently
                 if not face[i]:
@@ -754,7 +762,7 @@ class Window(pyglet.window.Window):
             self.strafe[1] += 1
         elif symbol == key.SPACE:
             if self.dy == 0:
-                self.dy = self.jump_speed
+                self.dy = JUMP_SPEED
         elif symbol == key.ESCAPE:
             self.set_exclusive_mouse(False)
         elif symbol == key.TAB:
