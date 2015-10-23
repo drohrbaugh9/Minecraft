@@ -8,6 +8,8 @@ from pyglet.gl import *
 from pyglet.graphics import TextureGroup
 from pyglet.window import key, mouse
 
+from noise import snoise2
+
 TICKS_PER_SEC = 60
 
 # Size of sectors used to ease block loading.
@@ -163,7 +165,7 @@ class Model(object):
         y = 0  # initial y height
         for x in xrange(-n, n + 1, s):
             for z in xrange(-n, n + 1, s):
-                # create a layer stone an grass everywhere.
+                # create a layer of stone and grass everywhere.
                 self.add_block((x, y - 2, z), GRASS, immediate=False)
                 self.add_block((x, y - 3, z), STONE, immediate=False)
 		"""
@@ -173,27 +175,17 @@ class Model(object):
                         self.add_block((x, y + dy, z), STONE, immediate=False)
 		"""
 
-        # generate the hills randomly
-	"""
-        o = n - 10
-        for _ in xrange(120):
-            a = random.randint(-o, o)  # x position of the hill
-            b = random.randint(-o, o)  # z position of the hill
-            c = -1  # base of the hill
-            h = random.randint(1, 6)  # height of the hill
-            s = random.randint(4, 8)  # 2 * s is the side length of the hill
-            d = 1  # how quickly to taper off the hills
-            t = random.choice([GRASS, SAND, BRICK])
-            for y in xrange(c, c + h):
-                for x in xrange(a - s, a + s + 1):
-                    for z in xrange(b - s, b + s + 1):
-                        if (x - a) ** 2 + (z - b) ** 2 > (s + 1) ** 2:
-                            continue
-                        if (x - 0) ** 2 + (z - 0) ** 2 < 5 ** 2:
-                            continue
-                        self.add_block((x, y, z), t, immediate=False)
-                s -= d  # decrement side lenth so hills taper off
-	"""
+        # terrain generation
+	octaves = 6
+	freq = 16.0*octaves
+	base = random.random()*101
+	
+	for z in xrange(-n, n + 1, 1):
+		for x in xrange(-n, n + 1, 1):
+			y = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 8 + 8))
+			self.add_block((x, y, z), GRASS, immediate=False)
+			for yfill in xrange(-1, y, 1):
+				self.add_block((x, yfill, z), GRASS, immediate=False)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
@@ -461,10 +453,6 @@ class Window(pyglet.window.Window):
         # right, and 0 otherwise.
         self.strafe = [0, 0]
 
-        # Current (x, y, z) position in the world, specified with floats. Note
-        # that, perhaps unlike in math class, the y-axis is the vertical axis.
-        self.position = (0, 0, 0)
-
         # First element is rotation of the player in the x-z plane (ground
         # plane) measured from the z-axis down. The second is the rotation
         # angle from the ground plane up. Rotation is in degrees.
@@ -502,6 +490,10 @@ class Window(pyglet.window.Window):
         # Instance of the model that handles the world.
         self.model = Model()
 
+        # Current (x, y, z) position in the world, specified with floats. Note
+        # that, perhaps unlike in math class, the y-axis is the vertical axis.
+        self.position = (0, self.find_initial_y(), 0)
+
         # The label that is displayed in the top left of the canvas.
         self.label = pyglet.text.Label('', font_name='Arial', font_size=18,
             x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
@@ -531,6 +523,12 @@ class Window(pyglet.window.Window):
 
     def set_player_height(self, height):
       self.player_height = height
+
+    def find_initial_y(self):
+      yguess = 30
+      while(not((0, yguess, 0) in self.model.world)):
+        yguess = yguess - 1
+      return yguess + 2
 
     def get_sight_vector(self):
         """ Returns the current line of sight vector indicating the direction
