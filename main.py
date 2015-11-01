@@ -186,43 +186,55 @@ class Model(object):
                 self.add_block((x, y - 2, z), GRASS, immediate=False)
                 self.add_block((x, y - 3, z), STONE, immediate=False)
 	#"""
-	"""
-                if x in (-n, n) or z in (-n, n):
-                    # create outer walls.
-                    for dy in xrange(-2, 3):
-                        self.add_block((x, y + dy, z), STONE, immediate=False)
-	"""
 
         # terrain generation
 	octaves = 6
 	freq = 16.0*octaves
-	"""base = random.random()*101
+	#"""
+	base = random.random()*101
 	m = []
 	
 	for z in xrange(-n, n + 1, 1):
 		m.append([])
 		for x in xrange(-n, n + 1, 1):
-			biome = ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 2 + 1))
+			biome = int(round(snoise2((x + base) / (4*freq), (z + base) / (4*freq), octaves) * 3 + 1))
 			m[z + n].append(biome)
+			# 0 is desert
+			# 1 is normal
+			# 2 is foothills
+			# 3 is mountains
 
-	print(m)"""
+	#print(m)
+	#"""
 	
 	base = random.random()*101
 	
-	#"""	
+	#"""
 	for z in xrange(-n, n + 1, 1):
 		for x in xrange(-n, n + 1, 1):
-			ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 8 + 8)) #normal
-			#ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 30 + 30)) #foothills
-			#ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 50 + 30)) #mountains
-			self.add_block((x, ypos, z), GRASS, immediate=False)
-			for yfill in xrange(-1, ypos, 1):
-				if (yfill > ypos/2):
-					self.add_block((x, yfill, z), GRASS, immediate=False)
-				else:
-					self.add_block((x, yfill, z), STONE, immediate=False)
-			if (random.random()*101 < 0.3):
-				self.add_tree((x, ypos + 1, z))
+			if (m[x + n][z + n] == 0):
+				ypos = int(round(snoise2((x + base) / (1.1*freq), (z + base) / (1.1*freq), octaves) * 8 + 8))
+				self.add_block((x, ypos, z), SAND, immediate=False)
+				for yfill in xrange(-1, ypos, 1):
+					if (yfill > ypos/2):
+						self.add_block((x, yfill, z), SAND, immediate=False)
+					else:
+						self.add_block((x, yfill, z), STONE, immediate=False)
+			else:
+				if (m[x + n][z + n] == 1):
+					ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 8 + 8))
+				if (m[x + n][z + n] == 2):
+					ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 8 + 8))
+				if (m[x + n][z + n] == 3):
+					ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 8 + 8))
+				self.add_block((x, ypos, z), GRASS, immediate=False)
+				for yfill in xrange(-1, ypos, 1):
+					if (yfill > ypos/2):
+						self.add_block((x, yfill, z), GRASS, immediate=False)
+					else:
+						self.add_block((x, yfill, z), STONE, immediate=False)
+				"""if (random.random()*101 < 0.3):
+					self.add_tree((x, ypos + 1, z))"""
 	#"""
 
     def hit_test(self, position, vector, max_distance=8):
