@@ -8,10 +8,14 @@ from pyglet.gl import *
 from pyglet.graphics import TextureGroup
 from pyglet.window import key, mouse
 
+from noise import snoise2
+
 TICKS_PER_SEC = 60
 
 # Size of sectors used to ease block loading.
 SECTOR_SIZE = 16
+
+WORLD_SIZE = 160
 
 WALKING_SPEED = 5
 FLYING_SPEED = 15
@@ -151,42 +155,87 @@ class Model(object):
 
         self._initialize()
 
+    def add_tree(self, position):
+	xpos, ypos, zpos = position
+	for y in xrange(ypos + 2, ypos + 4, 1):
+		for x in xrange(xpos - 2, xpos + 3, 1):
+			for z in xrange(zpos - 2, zpos + 3, 1):
+				self.add_block((x, y, z), OAK_LEAVES, immediate=False)
+	for x in xrange(xpos - 1, xpos + 2, 1):
+		for z in xrange(zpos - 1, zpos + 2, 1):
+			self.add_block((x, ypos + 4, z), OAK_LEAVES, immediate=False)
+	self.add_block((xpos, ypos + 5, zpos - 1), OAK_LEAVES, immediate=False)
+	self.add_block((xpos, ypos + 5, zpos), OAK_LEAVES, immediate=False)
+	self.add_block((xpos, ypos + 5, zpos + 1), OAK_LEAVES, immediate=False)
+	self.add_block((xpos - 1, ypos + 5, zpos), OAK_LEAVES, immediate=False)
+	self.add_block((xpos + 1, ypos + 5, zpos), OAK_LEAVES, immediate=False)
+	for y in xrange(ypos, ypos + 5, 1):
+		self.add_block((xpos, y, zpos), OAK_WOOD, immediate=False)
+
     def _initialize(self):
         """ Initialize the world by placing all the blocks.
 
         """
-        n = 80  # 1/2 width and height of world
+        n = WORLD_SIZE / 2 # 1/2 width and height of world
+	#"""
         s = 1  # step size
         y = 0  # initial y height
         for x in xrange(-n, n + 1, s):
             for z in xrange(-n, n + 1, s):
-                # create a layer stone an grass everywhere.
+                # create a layer of stone and grass everywhere.
                 self.add_block((x, y - 2, z), GRASS, immediate=False)
                 self.add_block((x, y - 3, z), STONE, immediate=False)
-                if x in (-n, n) or z in (-n, n):
-                    # create outer walls.
-                    for dy in xrange(-2, 3):
-                        self.add_block((x, y + dy, z), STONE, immediate=False)
+	#"""
 
-        # generate the hills randomly
-        o = n - 10
-        for _ in xrange(120):
-            a = random.randint(-o, o)  # x position of the hill
-            b = random.randint(-o, o)  # z position of the hill
-            c = -1  # base of the hill
-            h = random.randint(1, 6)  # height of the hill
-            s = random.randint(4, 8)  # 2 * s is the side length of the hill
-            d = 1  # how quickly to taper off the hills
-            t = random.choice([GRASS, SAND, BRICK])
-            for y in xrange(c, c + h):
-                for x in xrange(a - s, a + s + 1):
-                    for z in xrange(b - s, b + s + 1):
-                        if (x - a) ** 2 + (z - b) ** 2 > (s + 1) ** 2:
-                            continue
-                        if (x - 0) ** 2 + (z - 0) ** 2 < 5 ** 2:
-                            continue
-                        self.add_block((x, y, z), t, immediate=False)
-                s -= d  # decrement side lenth so hills taper off
+        # terrain generation
+	octaves = 6
+	freq = 16.0*octaves
+	#"""
+	base = random.random()*101
+	m = []
+	
+	for z in xrange(-n, n + 1, 1):
+		m.append([])
+		for x in xrange(-n, n + 1, 1):
+			biome = int(round(snoise2((x + base) / (4*freq), (z + base) / (4*freq), octaves) * 3 + 1))
+			m[z + n].append(biome)
+			# 0 is desert
+			# 1 is normal
+			# 2 is foothills
+			# 3 is mountains
+
+	#print(m)
+	#"""
+	
+	base = random.random()*101
+	
+	#"""
+	for z in xrange(-n, n + 1, 1):
+		for x in xrange(-n, n + 1, 1):
+			if (m[x + n][z + n] == 0):
+				ypos = int(round(snoise2((x + base) / (1.1*freq), (z + base) / (1.1*freq), octaves) * 8 + 8))
+				self.add_block((x, ypos, z), SAND, immediate=False)
+				for yfill in xrange(-1, ypos, 1):
+					if (yfill > ypos/2):
+						self.add_block((x, yfill, z), SAND, immediate=False)
+					else:
+						self.add_block((x, yfill, z), STONE, immediate=False)
+			else:
+				if (m[x + n][z + n] == 1):
+					ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 8 + 8))
+				if (m[x + n][z + n] == 2):
+					ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 8 + 8))
+				if (m[x + n][z + n] == 3):
+					ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 8 + 8))
+				self.add_block((x, ypos, z), GRASS, immediate=False)
+				for yfill in xrange(-1, ypos, 1):
+					if (yfill > ypos/2):
+						self.add_block((x, yfill, z), GRASS, immediate=False)
+					else:
+						self.add_block((x, yfill, z), STONE, immediate=False)
+				"""if (random.random()*101 < 0.3):
+					self.add_tree((x, ypos + 1, z))"""
+	#"""
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
@@ -454,10 +503,6 @@ class Window(pyglet.window.Window):
         # right, and 0 otherwise.
         self.strafe = [0, 0]
 
-        # Current (x, y, z) position in the world, specified with floats. Note
-        # that, perhaps unlike in math class, the y-axis is the vertical axis.
-        self.position = (0, 0, 0)
-
         # First element is rotation of the player in the x-z plane (ground
         # plane) measured from the z-axis down. The second is the rotation
         # angle from the ground plane up. Rotation is in degrees.
@@ -472,6 +517,12 @@ class Window(pyglet.window.Window):
         # The crosshairs at the center of the screen.
         self.reticle = None
 
+	# Velocity in the x direction.
+	self.dx = 0
+	
+	# Velocity in the z direction.
+	self.dz = 0
+	
         # Velocity in the y (upward) direction.
         self.dy = 0
 
@@ -488,6 +539,10 @@ class Window(pyglet.window.Window):
 
         # Instance of the model that handles the world.
         self.model = Model()
+
+        # Current (x, y, z) position in the world, specified with floats. Note
+        # that, perhaps unlike in math class, the y-axis is the vertical axis.
+        self.position = (0, self.find_initial_y(), 0)
 
         # The label that is displayed in the top left of the canvas.
         self.label = pyglet.text.Label('', font_name='Arial', font_size=18,
@@ -514,10 +569,16 @@ class Window(pyglet.window.Window):
 
     def set_max_jump_height(self, height):
       self.max_jump_height = height
-      self.jump_speed = math.sqrt(2 * self.gravity * self.max_jump_height)
+      JUMP_SPEED = math.sqrt(2 * GRAVITY * self.max_jump_height)
 
     def set_player_height(self, height):
       self.player_height = height
+
+    def find_initial_y(self):
+      yguess = 30
+      while(not((0, yguess, 0) in self.model.world)):
+        yguess = yguess - 1
+      return yguess + 2
 
     def get_sight_vector(self):
         """ Returns the current line of sight vector indicating the direction
@@ -618,8 +679,8 @@ class Window(pyglet.window.Window):
             # Update your vertical speed: if you are falling, speed up until you
             # hit terminal velocity; if you are jumping, slow down until you
             # start falling.
-            self.dy -= dt * self.gravity
-            self.dy = max(self.dy, -(self.terminal_velocity))
+            self.dy -= dt * GRAVITY
+            self.dy = max(self.dy, -(TERMINAL_VELOCITY))
             dy += self.dy * dt
         # collisions
         x, y, z = self.position
@@ -650,6 +711,10 @@ class Window(pyglet.window.Window):
         pad = 0.25
         p = list(position)
         np = normalize(position)
+	if (abs(p[0]) > (WORLD_SIZE / 2) + 0.25):
+		p[0] = (WORLD_SIZE / 2) + 0.25
+	if (abs(p[2]) > (WORLD_SIZE / 2) + 0.25):
+		p[2] = (WORLD_SIZE / 2) + 0.25
         for face in FACES:  # check all surrounding blocks
             for i in xrange(3):  # check each dimension independently
                 if not face[i]:
@@ -745,7 +810,7 @@ class Window(pyglet.window.Window):
             self.strafe[1] += 1
         elif symbol == key.SPACE:
             if self.dy == 0:
-                self.dy = self.jump_speed
+                self.dy = JUMP_SPEED
         elif symbol == key.ESCAPE:
             self.set_exclusive_mouse(False)
         elif symbol == key.TAB:
