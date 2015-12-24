@@ -156,21 +156,21 @@ class Model(object):
         self._initialize()
 
     def add_tree(self, position):
-	xpos, ypos, zpos = position
-	for y in xrange(ypos + 2, ypos + 4, 1):
-		for x in xrange(xpos - 2, xpos + 3, 1):
-			for z in xrange(zpos - 2, zpos + 3, 1):
-				self.add_block((x, y, z), OAK_LEAVES, immediate=False)
-	for x in xrange(xpos - 1, xpos + 2, 1):
-		for z in xrange(zpos - 1, zpos + 2, 1):
-			self.add_block((x, ypos + 4, z), OAK_LEAVES, immediate=False)
-	self.add_block((xpos, ypos + 5, zpos - 1), OAK_LEAVES, immediate=False)
-	self.add_block((xpos, ypos + 5, zpos), OAK_LEAVES, immediate=False)
-	self.add_block((xpos, ypos + 5, zpos + 1), OAK_LEAVES, immediate=False)
-	self.add_block((xpos - 1, ypos + 5, zpos), OAK_LEAVES, immediate=False)
-	self.add_block((xpos + 1, ypos + 5, zpos), OAK_LEAVES, immediate=False)
-	for y in xrange(ypos, ypos + 5, 1):
-		self.add_block((xpos, y, zpos), OAK_WOOD, immediate=False)
+		xpos, ypos, zpos = position
+		for y in xrange(ypos + 2, ypos + 4, 1):
+			for x in xrange(xpos - 2, xpos + 3, 1):
+				for z in xrange(zpos - 2, zpos + 3, 1):
+					self.add_block((x, y, z), OAK_LEAVES, immediate=False)
+		for x in xrange(xpos - 1, xpos + 2, 1):
+			for z in xrange(zpos - 1, zpos + 2, 1):
+				self.add_block((x, ypos + 4, z), OAK_LEAVES, immediate=False)
+		self.add_block((xpos, ypos + 5, zpos - 1), OAK_LEAVES, immediate=False)
+		self.add_block((xpos, ypos + 5, zpos), OAK_LEAVES, immediate=False)
+		self.add_block((xpos, ypos + 5, zpos + 1), OAK_LEAVES, immediate=False)
+		self.add_block((xpos - 1, ypos + 5, zpos), OAK_LEAVES, immediate=False)
+		self.add_block((xpos + 1, ypos + 5, zpos), OAK_LEAVES, immediate=False)
+		for y in xrange(ypos, ypos + 5, 1):
+			self.add_block((xpos, y, zpos), OAK_WOOD, immediate=False)
 
     def _initialize(self):
         """ Initialize the world by placing all the blocks.
