@@ -74,12 +74,18 @@ def tex_coords(top, bottom, side):
 
 TEXTURE_PATH = 'texture.png'
 
-GRASS = tex_coords((1, 0), (0, 1), (0, 0))
-SAND = tex_coords((1, 1), (1, 1), (1, 1))
-BRICK = tex_coords((2, 0), (2, 0), (2, 0))
-STONE = tex_coords((2, 1), (2, 1), (2, 1))
-OAK_WOOD = tex_coords((1, 2), (1, 2), (0, 2))
-OAK_LEAVES = tex_coords((2, 2), (2, 2), (2, 2))
+#BLOCK_NAME = tex_coords((top), (bottom), (sides))
+
+STONE = tex_coords((1, 3), (1, 3), (1, 3)) #1
+GRASS = tex_coords((1, 0), (0, 1), (0, 0)) #2
+DIRT = tex_coords((2, 3), (2, 3), (2, 3)) #3
+OAK_WOOD_PLANK = tex_coords((0, 3), (0, 3), (0, 3)) #5
+BEDROCK = tex_coords((3, 3), (3, 3), (3, 3)) #7
+SAND = tex_coords((1, 1), (1, 1), (1, 1)) #12
+OAK_WOOD = tex_coords((1, 2), (1, 2), (0, 2)) #17
+OAK_LEAVES = tex_coords((2, 2), (2, 2), (2, 2)) #18
+BRICK = tex_coords((2, 0), (2, 0), (2, 0)) #45
+STONE_BRICK = tex_coords((2, 1), (2, 1), (2, 1)) #98
 
 FACES = [
     ( 0, 1, 0),
@@ -517,18 +523,18 @@ class Window(pyglet.window.Window):
 
         # The crosshairs at the center of the screen.
         self.reticle = None
-
-	# Velocity in the x direction.
-	self.dx = 0
-	
-	# Velocity in the z direction.
-	self.dz = 0
+		
+		# Velocity in the x direction.
+		self.dx = 0
+		
+		# Velocity in the z direction.
+		self.dz = 0
 	
         # Velocity in the y (upward) direction.
         self.dy = 0
 
         # A list of blocks the player can place. Hit num keys to cycle.
-        self.inventory = [BRICK, GRASS, SAND, OAK_WOOD, OAK_LEAVES]
+        self.inventory = [GRASS, SAND, OAK_WOOD, OAK_LEAVES, STONE_BRICK]
 
         # The current block the user can place. Hit num keys to cycle.
         self.block = self.inventory[0]
@@ -765,7 +771,7 @@ class Window(pyglet.window.Window):
                     self.model.add_block(previous, self.block)
             elif button == pyglet.window.mouse.LEFT and block:
                 texture = self.model.world[block]
-                if texture != STONE:
+                if texture != STONE_BRICK:
                     self.model.remove_block(block)
         else:
             self.set_exclusive_mouse(True)
