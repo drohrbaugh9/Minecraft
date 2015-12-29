@@ -523,12 +523,12 @@ class Window(pyglet.window.Window):
 
         # The crosshairs at the center of the screen.
         self.reticle = None
-		
-		# Velocity in the x direction.
-		self.dx = 0
-		
-		# Velocity in the z direction.
-		self.dz = 0
+
+	# Velocity in the x direction.
+	self.dx = 0
+
+	# Velocity in the z direction.
+	self.dz = 0
 	
         # Velocity in the y (upward) direction.
         self.dy = 0
