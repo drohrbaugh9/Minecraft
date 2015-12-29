@@ -163,19 +163,19 @@ class Model(object):
 
     def add_tree(self, position):
     	xpos, ypos, zpos = position
-    	for y in xrange(ypos + 2, ypos + 4, 1):
+    	for y in xrange(ypos + 3, ypos + 5, 1):
     		for x in xrange(xpos - 2, xpos + 3, 1):
     			for z in xrange(zpos - 2, zpos + 3, 1):
     				self.add_block((x, y, z), OAK_LEAVES, immediate=False)
     	for x in xrange(xpos - 1, xpos + 2, 1):
     		for z in xrange(zpos - 1, zpos + 2, 1):
-    			self.add_block((x, ypos + 4, z), OAK_LEAVES, immediate=False)
-    	self.add_block((xpos, ypos + 5, zpos - 1), OAK_LEAVES, immediate=False)
-    	self.add_block((xpos, ypos + 5, zpos), OAK_LEAVES, immediate=False)
-    	self.add_block((xpos, ypos + 5, zpos + 1), OAK_LEAVES, immediate=False)
-    	self.add_block((xpos - 1, ypos + 5, zpos), OAK_LEAVES, immediate=False)
-    	self.add_block((xpos + 1, ypos + 5, zpos), OAK_LEAVES, immediate=False)
-    	for y in xrange(ypos, ypos + 5, 1):
+    			self.add_block((x, ypos + 5, z), OAK_LEAVES, immediate=False)
+    	self.add_block((xpos, ypos + 6, zpos - 1), OAK_LEAVES, immediate=False)
+    	self.add_block((xpos, ypos + 6, zpos), OAK_LEAVES, immediate=False)
+    	self.add_block((xpos, ypos + 6, zpos + 1), OAK_LEAVES, immediate=False)
+    	self.add_block((xpos - 1, ypos + 6, zpos), OAK_LEAVES, immediate=False)
+    	self.add_block((xpos + 1, ypos + 6, zpos), OAK_LEAVES, immediate=False)
+    	for y in xrange(ypos, ypos + 6, 1):
     		self.add_block((xpos, y, zpos), OAK_WOOD, immediate=False)
 
     def _initialize(self):
@@ -183,7 +183,7 @@ class Model(object):
 
         """
         n = WORLD_SIZE / 2 # 1/2 width and height of world
-        #"""
+        """
         s = 1  # step size
         y = 0  # initial y height
         for x in xrange(-n, n + 1, s):
@@ -191,58 +191,24 @@ class Model(object):
                 # create a layer of stone and grass everywhere.
                 self.add_block((x, y - 2, z), GRASS, immediate=False)
                 self.add_block((x, y - 3, z), STONE, immediate=False)
-        #"""
+        """
 
         # terrain generation
         octaves = 6
         freq = 16.0*octaves
-        #"""
         base = random.random()*101
-        m = []
-        
-        for z in xrange(-n, n + 1, 1):
-        	m.append([])
-        	for x in xrange(-n, n + 1, 1):
-        		biome = int(round(snoise2((x + base) / (4*freq), (z + base) / (4*freq), octaves) * 3 + 1))
-        		m[z + n].append(biome)
-        		# 0 is desert
-        		# 1 is normal
-        		# 2 is foothills
-        		# 3 is mountains
-        
-        #print(m)
-        #"""
-        
-        base = random.random()*101
-        
-        #"""
         
         for z in xrange(-n, n + 1, 1):
         	for x in xrange(-n, n + 1, 1):
-        		if (m[x + n][z + n] == 0):
-        			ypos = int(round(snoise2((x + base) / (1.1*freq), (z + base) / (1.1*freq), octaves) * 8 + 8))
-        			self.add_block((x, ypos, z), SAND, immediate=False)
-        			for yfill in xrange(-1, ypos, 1):
-        				if (yfill > ypos/2):
-        					self.add_block((x, yfill, z), SAND, immediate=False)
-        				else:
-        					self.add_block((x, yfill, z), STONE, immediate=False)
-        		else:
-        			if (m[x + n][z + n] == 1):
-        				ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 8 + 8))
-        			if (m[x + n][z + n] == 2):
-        				ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 8 + 8))
-        			if (m[x + n][z + n] == 3):
-        				ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 8 + 8))
-        			self.add_block((x, ypos, z), GRASS, immediate=False)
-        			for yfill in xrange(-1, ypos, 1):
-        				if (yfill > ypos/2):
-        					self.add_block((x, yfill, z), GRASS, immediate=False)
-        				else:
-        					self.add_block((x, yfill, z), STONE, immediate=False)
-        			"""if (random.random()*101 < 0.3):
-					self.add_tree((x, ypos + 1, z))"""
-		#"""
+			ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 12 + 12))
+			self.add_block((x, ypos, z), GRASS, immediate=False)
+			for yfill in xrange(-1, ypos, 1):
+				if (yfill > ypos/2):
+					self.add_block((x, yfill, z), GRASS, immediate=False)
+				else:
+					self.add_block((x, yfill, z), STONE, immediate=False)
+        		#if (random.random()*101 < 0.3):
+				#self.add_tree((x, ypos + 1, z))
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
