@@ -34,6 +34,9 @@ TERMINAL_VELOCITY = 50
 
 PLAYER_HEIGHT = 2
 
+TREES = True
+TERRAIN_GEN = True
+
 def cube_vertices(x, y, z, n):
     """ Return the vertices of the cube at position x, y, z with size 2*n.
 
@@ -183,32 +186,34 @@ class Model(object):
 
         """
         n = WORLD_SIZE / 2 # 1/2 width and height of world
-        """
-        s = 1  # step size
-        y = 0  # initial y height
-        for x in xrange(-n, n + 1, s):
-            for z in xrange(-n, n + 1, s):
-                # create a layer of stone and grass everywhere.
-                self.add_block((x, y - 2, z), GRASS, immediate=False)
-                self.add_block((x, y - 3, z), STONE, immediate=False)
-        """
+        
+	# flat world generation
+	if (TERRAIN_GEN != True):
+		s = 1  # step size
+        	y = 0  # initial y height
+        	for x in xrange(-n, n + 1, s):
+            		for z in xrange(-n, n + 1, s):
+                		# create a layer of stone and grass everywhere.
+                		self.add_block((x, y - 2, z), GRASS, immediate=False)
+                		self.add_block((x, y - 3, z), STONE, immediate=False)
 
         # terrain generation
-        octaves = 6
-        freq = 16.0*octaves
-        base = random.random()*101
-        
-        for z in xrange(-n, n + 1, 1):
-        	for x in xrange(-n, n + 1, 1):
-			ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 12 + 12))
-			self.add_block((x, ypos, z), GRASS, immediate=False)
-			for yfill in xrange(-1, ypos, 1):
-				if (yfill > ypos/2):
-					self.add_block((x, yfill, z), GRASS, immediate=False)
-				else:
-					self.add_block((x, yfill, z), STONE, immediate=False)
-        		#if (random.random()*101 < 0.3):
-				#self.add_tree((x, ypos + 1, z))
+	if (TERRAIN_GEN == True):
+        	octaves = 6
+        	freq = 16.0*octaves
+        	base = random.random()*101
+        	
+        	for z in xrange(-n, n + 1, 1):
+        		for x in xrange(-n, n + 1, 1):
+				ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 12 + 12))
+				self.add_block((x, ypos, z), GRASS, immediate=False)
+				for yfill in xrange(-1, ypos, 1):
+					if (yfill > ypos/2):
+						self.add_block((x, yfill, z), GRASS, immediate=False)
+					else:
+						self.add_block((x, yfill, z), STONE, immediate=False)
+        			if (TREES & (random.random()*101 < 0.3)):
+					self.add_tree((x, ypos + 1, z))
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
