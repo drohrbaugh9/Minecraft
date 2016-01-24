@@ -23,7 +23,7 @@ class World (main.Window):
         texture = BRICK
       elif texture == "STONE" or texture == 3:
         texture = STONE
-      elif texture == "OAK_WOOD" or texture == "WOOD" or texture = 4:
+      elif texture == "OAK_WOOD" or texture == "WOOD" or texture == 4:
       	texture = OAK_WOOD
       elif texture == "OAK_LEAVES" or texture == 5:
       	texture = OAK_LEAVES
