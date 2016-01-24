@@ -198,22 +198,24 @@ class Model(object):
                 		self.add_block((x, y - 3, z), STONE, immediate=False)
 
         # terrain generation
-	if (TERRAIN_GEN == True):
-        	octaves = 6
-        	freq = 16.0*octaves
-        	base = random.random()*101
+        octaves = 6
+        freq = 16.0*octaves
+        base = random.random()*101
         	
-        	for z in xrange(-n, n + 1, 1):
-        		for x in xrange(-n, n + 1, 1):
-				ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 12 + 12))
+        for z in xrange(-n, n + 1, 1):
+        	for x in xrange(-n, n + 1, 1):
+			ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 12 + 12))
+			if (TERRAIN_GEN):
 				self.add_block((x, ypos, z), GRASS, immediate=False)
 				for yfill in xrange(-1, ypos, 1):
 					if (yfill > ypos/2):
 						self.add_block((x, yfill, z), GRASS, immediate=False)
 					else:
 						self.add_block((x, yfill, z), STONE, immediate=False)
-        			if (TREES & (random.random()*101 < 0.3)):
-					self.add_tree((x, ypos + 1, z))
+        		if (TREES & TERRAIN_GEN & (random.random()*101 < 0.3)):
+				self.add_tree((x, ypos + 1, z))
+                        elif (TREES & (TERRAIN_GEN != True) & (random.random()*101 < 0.3)):
+				self.add_tree((x, -1, z))
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
