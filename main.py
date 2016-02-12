@@ -75,13 +75,13 @@ def tex_coords(top, bottom, side):
     return result
 
 
-TEXTURE_PATH = 'texture.png'
+TEXTURE_PATH = 'new_texture.png'
 
 #BLOCK_NAME = tex_coords((top), (bottom), (sides))
 
 STONE = tex_coords((1, 3), (1, 3), (1, 3)) #1
 GRASS = tex_coords((1, 0), (0, 1), (0, 0)) #2
-DIRT = tex_coords((2, 3), (2, 3), (2, 3)) #3
+DIRT = tex_coords((0, 1), (0, 1), (0, 1)) #3
 OAK_WOOD_PLANK = tex_coords((0, 3), (0, 3), (0, 3)) #5
 BEDROCK = tex_coords((3, 3), (3, 3), (3, 3)) #7
 SAND = tex_coords((1, 1), (1, 1), (1, 1)) #12
@@ -196,22 +196,29 @@ class Model(object):
                 		# create a layer of stone and grass everywhere.
                 		self.add_block((x, y - 2, z), GRASS, immediate=False)
                 		self.add_block((x, y - 3, z), STONE, immediate=False)
+				self.add_block((x, y - 4, z), BEDROCK, immediate=False)
 
         # terrain generation
         octaves = 6
-        freq = 16.0*octaves
-        base = random.random()*101
+        main_freq = 16.0*octaves
+        main_base = 1# random.random()*101
+	bedrock_freq = 2.0*octaves
+	bedrock_base = random.random()*101
         	
         for z in xrange(-n, n + 1, 1):
         	for x in xrange(-n, n + 1, 1):
-			ypos = int(round(snoise2((x + base) / freq, (z + base) / freq, octaves) * 12 + 12))
+			ypos = int(round(snoise2((x + main_base) / main_freq, (z + main_base) / main_freq, octaves) * 12 + 12))
+			bedrock_ypos = int(round(snoise2((x + main_base) / bedrock_freq, (z + main_base) / bedrock_freq, octaves) * 2 - 1))
 			if (TERRAIN_GEN):
 				self.add_block((x, ypos, z), GRASS, immediate=False)
-				for yfill in xrange(-1, ypos, 1):
-					if (yfill > ypos/2):
-						self.add_block((x, yfill, z), GRASS, immediate=False)
+				for main_yfill in xrange(-1, ypos, 1):
+					if (main_yfill > ypos/2):
+						self.add_block((x, main_yfill, z), DIRT, immediate=False)
 					else:
-						self.add_block((x, yfill, z), STONE, immediate=False)
+						self.add_block((x, main_yfill, z), STONE, immediate=False)
+				self.add_block((x, bedrock_ypos, z), BEDROCK, immediate=False)
+				for bedrock_yfill in xrange(-2, bedrock_ypos, 1):
+					self.add_block((x, bedrock_yfill, z), BEDROCK, immediate=False)
         		if (TREES & TERRAIN_GEN & (random.random()*101 < 0.3)):
 				self.add_tree((x, ypos + 1, z))
                         elif (TREES & (TERRAIN_GEN != True) & (random.random()*101 < 0.3)):
@@ -744,7 +751,7 @@ class Window(pyglet.window.Window):
                     self.model.add_block(previous, self.block)
             elif button == pyglet.window.mouse.LEFT and block:
                 texture = self.model.world[block]
-                if texture != STONE_BRICK:
+                if texture != BEDROCK:
                     self.model.remove_block(block)
         else:
             self.set_exclusive_mouse(True)
