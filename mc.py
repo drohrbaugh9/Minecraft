@@ -10,7 +10,7 @@ OAK_LEAVES = main.OAK_LEAVES
 class World (main.Window):
 
   def __init__(self):
-    main.Window.__init__(self, width=800, height=600, caption='Pyglet', resizable=True)
+    main.Window.__init__(self, width=800, height=600, caption='Minecraft', resizable=True)
   
   def add_block(self, x, y, z, texture):
     position = (x, y - 1, z)
