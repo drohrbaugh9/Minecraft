@@ -209,6 +209,12 @@ class Model(object):
 
     def add_tree(self, position):
     	xpos, ypos, zpos = position
+    	for x in xrange(xpos - 2, xpos + 3, 1):
+    		for z in xrange(zpos - 2, zpos + 3, 1):
+    			for y in xrange (ypos, ypos + 6, 1):
+    				self.add_block((x, y, z), tree[y,x,z], immediate=False)
+    	"""
+    	xpos, ypos, zpos = position
     	for y in xrange(ypos + 3, ypos + 5, 1):
     		for x in xrange(xpos - 2, xpos + 3, 1):
     			for z in xrange(zpos - 2, zpos + 3, 1):
@@ -223,6 +229,7 @@ class Model(object):
     	self.add_block((xpos + 1, ypos + 6, zpos), OAK_LEAVES, immediate=False)
     	for y in xrange(ypos, ypos + 6, 1):
     		self.add_block((xpos, y, zpos), OAK_WOOD, immediate=False)
+    	"""
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
@@ -972,3 +979,40 @@ def main_window(window):
 
 if __name__ == '__main__':
     main()
+    
+# 3d tuple that stores that positions of all the blocks in a tree
+tree = (((0,0,0,0,0),
+         (0,0,0,0,0),
+         (0,0,4,0,0),
+         (0,0,0,0,0),
+         (0,0,0,0,0)),
+        ((0,0,0,0,0),
+         (0,0,0,0,0),
+         (0,0,4,0,0),
+         (0,0,0,0,0),
+         (0,0,0,0,0)),
+        ((0,0,0,0,0),
+         (0,0,0,0,0),
+         (0,0,4,0,0),
+         (0,0,0,0,0),
+         (0,0,0,0,0)),
+        ((5,5,5,5,5),
+         (5,5,5,5,5),
+         (5,5,4,5,5),
+         (5,5,5,5,5),
+         (5,5,5,5,5)),
+        ((5,5,5,5,5),
+         (5,5,5,5,5),
+         (5,5,4,5,5),
+         (5,5,5,5,5),
+         (5,5,5,5,5)),
+        ((0,0,0,0,0),
+         (0,5,5,5,0),
+         (0,5,4,5,0),
+         (0,5,5,5,0),
+         (0,0,0,0,0)),
+        ((0,0,0,0,0),
+         (0,0,5,0,0),
+         (0,5,5,5,0),
+         (0,0,5,0,0),
+         (0,0,0,0,0)))
