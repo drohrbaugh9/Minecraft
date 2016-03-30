@@ -164,23 +164,6 @@ class Model(object):
 
         self._initialize()
 
-    def add_tree(self, position):
-    	xpos, ypos, zpos = position
-    	for y in xrange(ypos + 3, ypos + 5, 1):
-    		for x in xrange(xpos - 2, xpos + 3, 1):
-    			for z in xrange(zpos - 2, zpos + 3, 1):
-    				self.add_block((x, y, z), OAK_LEAVES, immediate=False)
-    	for x in xrange(xpos - 1, xpos + 2, 1):
-    		for z in xrange(zpos - 1, zpos + 2, 1):
-    			self.add_block((x, ypos + 5, z), OAK_LEAVES, immediate=False)
-    	self.add_block((xpos, ypos + 6, zpos - 1), OAK_LEAVES, immediate=False)
-    	self.add_block((xpos, ypos + 6, zpos), OAK_LEAVES, immediate=False)
-    	self.add_block((xpos, ypos + 6, zpos + 1), OAK_LEAVES, immediate=False)
-    	self.add_block((xpos - 1, ypos + 6, zpos), OAK_LEAVES, immediate=False)
-    	self.add_block((xpos + 1, ypos + 6, zpos), OAK_LEAVES, immediate=False)
-    	for y in xrange(ypos, ypos + 6, 1):
-    		self.add_block((xpos, y, zpos), OAK_WOOD, immediate=False)
-
     def _initialize(self):
         """ Initialize the world by placing all the blocks.
 
@@ -223,6 +206,23 @@ class Model(object):
 				self.add_tree((x, ypos + 1, z))
                         elif (TREES & (TERRAIN_GEN != True) & (random.random()*101 < 0.3)):
 				self.add_tree((x, -1, z))
+
+    def add_tree(self, position):
+    	xpos, ypos, zpos = position
+    	for y in xrange(ypos + 3, ypos + 5, 1):
+    		for x in xrange(xpos - 2, xpos + 3, 1):
+    			for z in xrange(zpos - 2, zpos + 3, 1):
+    				self.add_block((x, y, z), OAK_LEAVES, immediate=False)
+    	for x in xrange(xpos - 1, xpos + 2, 1):
+    		for z in xrange(zpos - 1, zpos + 2, 1):
+    			self.add_block((x, ypos + 5, z), OAK_LEAVES, immediate=False)
+    	self.add_block((xpos, ypos + 6, zpos - 1), OAK_LEAVES, immediate=False)
+    	self.add_block((xpos, ypos + 6, zpos), OAK_LEAVES, immediate=False)
+    	self.add_block((xpos, ypos + 6, zpos + 1), OAK_LEAVES, immediate=False)
+    	self.add_block((xpos - 1, ypos + 6, zpos), OAK_LEAVES, immediate=False)
+    	self.add_block((xpos + 1, ypos + 6, zpos), OAK_LEAVES, immediate=False)
+    	for y in xrange(ypos, ypos + 6, 1):
+    		self.add_block((xpos, y, zpos), OAK_WOOD, immediate=False)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
