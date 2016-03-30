@@ -13,7 +13,7 @@ class World (main.Window):
     main.Window.__init__(self, width=800, height=600, caption='Minecraft', resizable=True)
   
   def add_block(self, x, y, z, texture):
-    position = (x, y - 1, z)
+    #position = (x, y - 1, z)
     if isinstance(texture, (str, int, float, long)):
       if isinstance(texture, str):
         texture = texture.upper()
@@ -29,7 +29,8 @@ class World (main.Window):
       	texture = OAK_LEAVES
       else:
         texture = GRASS
-    self.model.add_block(position, texture)
+    if texture != 0:
+      self.model.add_block(position, texture)
   
   def remove_block(self, x, y, z):
     position = (x, y - 1, z)
