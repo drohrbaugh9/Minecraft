@@ -34,7 +34,7 @@ TERMINAL_VELOCITY = 50
 
 PLAYER_HEIGHT = 2
 
-TREES = True
+TREES = False
 TERRAIN_GEN = True
 
 def cube_vertices(x, y, z, n):
@@ -182,7 +182,7 @@ class Model(object):
 				self.add_block((x, y - 4, z), BEDROCK, immediate=False)
 
         # terrain generation
-        octaves = 6
+        octaves = 8
         main_freq = 16.0*octaves
         main_base = 1# random.random()*101
 	bedrock_freq = 2.0*octaves
@@ -194,6 +194,7 @@ class Model(object):
 			bedrock_ypos = int(round(snoise2((x + main_base) / bedrock_freq, (z + main_base) / bedrock_freq, octaves) * 2 - 1))
 			if (TERRAIN_GEN):
 				self.add_block((x, ypos, z), GRASS, immediate=False)
+				"""
 				for main_yfill in xrange(-1, ypos, 1):
 					if (main_yfill > ypos/2):
 						self.add_block((x, main_yfill, z), DIRT, immediate=False)
@@ -202,6 +203,7 @@ class Model(object):
 				self.add_block((x, bedrock_ypos, z), BEDROCK, immediate=False)
 				for bedrock_yfill in xrange(-2, bedrock_ypos, 1):
 					self.add_block((x, bedrock_yfill, z), BEDROCK, immediate=False)
+				"""
         		if (TREES & TERRAIN_GEN & (random.random()*101 < 0.3)):
 				self.add_tree((x, ypos + 1, z))
                         elif (TREES & (TERRAIN_GEN != True) & (random.random()*101 < 0.3)):
