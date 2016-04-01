@@ -34,7 +34,7 @@ TERMINAL_VELOCITY = 50
 
 PLAYER_HEIGHT = 2
 
-TREES = False
+TREES = True
 TERRAIN_GEN = True
 
 def cube_vertices(x, y, z, n):
@@ -176,25 +176,25 @@ class Model(object):
         	y = 0  # initial y height
         	for x in xrange(-n, n + 1, s):
             		for z in xrange(-n, n + 1, s):
-                		# create a layer of stone and grass everywhere.
+                		# create a layer of stone, grass, and bedrock everywhere.
                 		self.add_block((x, y - 2, z), GRASS, immediate=False)
                 		self.add_block((x, y - 3, z), STONE, immediate=False)
 				self.add_block((x, y - 4, z), BEDROCK, immediate=False)
 
         # terrain generation
-        octaves = 8
-        main_freq = 16.0*octaves
+        main_octaves = 8
+	main_freq = 14.0*main_octaves
         main_base = 1# random.random()*101
-	bedrock_freq = 2.0*octaves
+	bedrock_octaves = 6
+	bedrock_freq = 2.0 * bedrock_octaves
 	bedrock_base = random.random()*101
         	
         for z in xrange(-n, n + 1, 1):
         	for x in xrange(-n, n + 1, 1):
-			ypos = int(round(snoise2((x + main_base) / main_freq, (z + main_base) / main_freq, octaves) * 12 + 12))
-			bedrock_ypos = int(round(snoise2((x + main_base) / bedrock_freq, (z + main_base) / bedrock_freq, octaves) * 2 - 1))
+			ypos = int(round(snoise2((x + main_base) / main_freq, (z + main_base) / main_freq, main_octaves) * 15 + 15))
+			bedrock_ypos = int(round(snoise2((x + main_base) / bedrock_freq, (z + main_base) / bedrock_freq, bedrock_octaves) * 2 - 1))
 			if (TERRAIN_GEN):
 				self.add_block((x, ypos, z), GRASS, immediate=False)
-				"""
 				for main_yfill in xrange(-1, ypos, 1):
 					if (main_yfill > ypos/2):
 						self.add_block((x, main_yfill, z), DIRT, immediate=False)
@@ -203,19 +203,12 @@ class Model(object):
 				self.add_block((x, bedrock_ypos, z), BEDROCK, immediate=False)
 				for bedrock_yfill in xrange(-2, bedrock_ypos, 1):
 					self.add_block((x, bedrock_yfill, z), BEDROCK, immediate=False)
-				"""
         		if (TREES & TERRAIN_GEN & (random.random()*101 < 0.3)):
 				self.add_tree((x, ypos + 1, z))
                         elif (TREES & (TERRAIN_GEN != True) & (random.random()*101 < 0.3)):
 				self.add_tree((x, -1, z))
 
     def add_tree(self, position):
-    	xpos, ypos, zpos = position
-    	for x in xrange(xpos - 2, xpos + 3, 1):
-    		for z in xrange(zpos - 2, zpos + 3, 1):
-    			for y in xrange (ypos, ypos + 6, 1):
-    				self.add_block((x, y, z), tree[y,x,z], immediate=False)
-    	"""
     	xpos, ypos, zpos = position
     	for y in xrange(ypos + 3, ypos + 5, 1):
     		for x in xrange(xpos - 2, xpos + 3, 1):
@@ -231,7 +224,6 @@ class Model(object):
     	self.add_block((xpos + 1, ypos + 6, zpos), OAK_LEAVES, immediate=False)
     	for y in xrange(ypos, ypos + 6, 1):
     		self.add_block((xpos, y, zpos), OAK_WOOD, immediate=False)
-    	"""
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
@@ -983,40 +975,3 @@ def main_window(window):
 
 if __name__ == '__main__':
     main()
-    
-# 3d tuple that stores that positions of all the blocks in a tree
-tree = (((0,0,0,0,0),
-         (0,0,0,0,0),
-         (0,0,4,0,0),
-         (0,0,0,0,0),
-         (0,0,0,0,0)),
-        ((0,0,0,0,0),
-         (0,0,0,0,0),
-         (0,0,4,0,0),
-         (0,0,0,0,0),
-         (0,0,0,0,0)),
-        ((0,0,0,0,0),
-         (0,0,0,0,0),
-         (0,0,4,0,0),
-         (0,0,0,0,0),
-         (0,0,0,0,0)),
-        ((5,5,5,5,5),
-         (5,5,5,5,5),
-         (5,5,4,5,5),
-         (5,5,5,5,5),
-         (5,5,5,5,5)),
-        ((5,5,5,5,5),
-         (5,5,5,5,5),
-         (5,5,4,5,5),
-         (5,5,5,5,5),
-         (5,5,5,5,5)),
-        ((0,0,0,0,0),
-         (0,5,5,5,0),
-         (0,5,4,5,0),
-         (0,5,5,5,0),
-         (0,0,0,0,0)),
-        ((0,0,0,0,0),
-         (0,0,5,0,0),
-         (0,5,5,5,0),
-         (0,0,5,0,0),
-         (0,0,0,0,0)))
