@@ -483,6 +483,8 @@ class Window(pyglet.window.Window):
 
         self.max_jump_height = MAX_JUMP_HEIGHT
 
+	self.jump_speed = JUMP_SPEED
+
         self.player_height = PLAYER_HEIGHT
 
         # Whether or not the window exclusively captures the mouse.
@@ -565,7 +567,7 @@ class Window(pyglet.window.Window):
 
     def set_max_jump_height(self, height):
       self.max_jump_height = height
-      JUMP_SPEED = math.sqrt(2 * GRAVITY * self.max_jump_height)
+      self.jump_speed = math.sqrt(2 * GRAVITY * self.max_jump_height)
 
     def set_player_height(self, height):
       self.player_height = height
@@ -806,7 +808,7 @@ class Window(pyglet.window.Window):
             self.strafe[1] += 1
         elif symbol == key.SPACE:
             if self.dy == 0:
-                self.dy = JUMP_SPEED
+                self.dy = self.jump_speed
         elif symbol == key.ESCAPE:
             self.set_exclusive_mouse(False)
         elif symbol == key.TAB:
