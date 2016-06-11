@@ -475,7 +475,7 @@ class Window(pyglet.window.Window):
 
         self.max_jump_height = MAX_JUMP_HEIGHT
 
-	self.jump_speed = JUMP_SPEED
+	     self.jump_speed = JUMP_SPEED
 
         self.player_height = PLAYER_HEIGHT
 
