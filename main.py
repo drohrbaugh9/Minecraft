@@ -701,10 +701,10 @@ class Window(pyglet.window.Window):
         pad = 0.25
         p = list(position)
         np = normalize(position)
-	if (abs(p[0]) > (WORLD_SIZE / 2) + 0.25):
-		p[0] = (WORLD_SIZE / 2) + 0.25
-	if (abs(p[2]) > (WORLD_SIZE / 2) + 0.25):
-		p[2] = (WORLD_SIZE / 2) + 0.25
+	if (abs(p[0]) > (WORLD_SIZE / 2) + pad):
+		p[0] = (WORLD_SIZE / 2) + pad
+	if (abs(p[2]) > (WORLD_SIZE / 2) + pad):
+		p[2] = (WORLD_SIZE / 2) + pad
         for face in FACES:  # check all surrounding blocks
             for i in xrange(3):  # check each dimension independently
                 if not face[i]:
