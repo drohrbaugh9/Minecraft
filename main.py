@@ -224,6 +224,7 @@ class Model(object):
     	self.add_block((xpos + 1, ypos + 6, zpos), OAK_LEAVES, immediate=False)
     	for y in xrange(ypos, ypos + 6, 1):
     		self.add_block((xpos, y, zpos), OAK_WOOD, immediate=False)
+        self.add_block((xpos, ypos - 1, zpos)), DIRT, immediate=False)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
