@@ -34,7 +34,7 @@ TERMINAL_VELOCITY = 50
 
 PLAYER_HEIGHT = 2
 
-TREES = True
+TREES = False
 TERRAIN_GEN = True
 
 def cube_vertices(x, y, z, n):
