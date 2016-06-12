@@ -224,6 +224,7 @@ class Model(object):
     	self.add_block((xpos + 1, ypos + 6, zpos), OAK_LEAVES, immediate=False)
     	for y in xrange(ypos, ypos + 6, 1):
     		self.add_block((xpos, y, zpos), OAK_WOOD, immediate=False)
+        self.add_block((xpos, ypos - 1, zpos)), DIRT, immediate=False)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
@@ -475,7 +476,7 @@ class Window(pyglet.window.Window):
 
         self.max_jump_height = MAX_JUMP_HEIGHT
 
-	self.jump_speed = JUMP_SPEED
+	     self.jump_speed = JUMP_SPEED
 
         self.player_height = PLAYER_HEIGHT
 
@@ -701,10 +702,10 @@ class Window(pyglet.window.Window):
         pad = 0.25
         p = list(position)
         np = normalize(position)
-	if (abs(p[0]) > (WORLD_SIZE / 2) + 0.25):
-		p[0] = (WORLD_SIZE / 2) + 0.25
-	if (abs(p[2]) > (WORLD_SIZE / 2) + 0.25):
-		p[2] = (WORLD_SIZE / 2) + 0.25
+	if (abs(p[0]) > (WORLD_SIZE / 2) + pad):
+		p[0] = (WORLD_SIZE / 2) + pad
+	if (abs(p[2]) > (WORLD_SIZE / 2) + pad):
+		p[2] = (WORLD_SIZE / 2) + pad
         for face in FACES:  # check all surrounding blocks
             for i in xrange(3):  # check each dimension independently
                 if not face[i]:
