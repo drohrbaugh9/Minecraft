@@ -34,7 +34,7 @@ TERMINAL_VELOCITY = 50
 
 PLAYER_HEIGHT = 2
 
-TREES = False
+TREES = True
 TERRAIN_GEN = True
 
 def cube_vertices(x, y, z, n):
@@ -224,7 +224,7 @@ class Model(object):
     	self.add_block((xpos + 1, ypos + 6, zpos), OAK_LEAVES, immediate=False)
     	for y in xrange(ypos, ypos + 6, 1):
     		self.add_block((xpos, y, zpos), OAK_WOOD, immediate=False)
-        self.add_block((xpos, ypos - 1, zpos)), DIRT, immediate=False)
+        self.add_block((xpos, ypos - 1, zpos), DIRT, immediate=False)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
@@ -476,7 +476,7 @@ class Window(pyglet.window.Window):
 
         self.max_jump_height = MAX_JUMP_HEIGHT
 
-	     self.jump_speed = JUMP_SPEED
+	self.jump_speed = JUMP_SPEED
 
         self.player_height = PLAYER_HEIGHT
 
