@@ -34,7 +34,7 @@ TERMINAL_VELOCITY = 50
 
 PLAYER_HEIGHT = 2
 
-TREES = True
+TREES = False
 TERRAIN_GEN = True
 
 def cube_vertices(x, y, z, n):
@@ -172,6 +172,26 @@ class Model(object):
         
 	# flat world generation
 	if (TERRAIN_GEN != True):
+		
+		"""----------- added -----------
+		biome_octaves = 4
+		biome_freq = 50.0*biome_octaves
+        	biome_base = random.random()*101
+		
+		for z in xrange(-n, n + 1, 1):
+        		for x in xrange(-n, n + 1, 1):
+				biome = int(round(snoise2((x + biome_base) / biome_freq, (z + biome_base) / biome_freq, biome_octaves) + 1))
+				pos = (x, 4, z)
+				if (biome == 0):
+					self.add_block(pos, SAND, immediate=False)
+				elif (biome == 1):
+					self.add_block(pos, GRASS, immediate=False)
+				elif (biome == 2):
+					self.add_block(pos, SAND, immediate=False)
+
+		#-----------------------------"""
+		
+		"""--------- original code ---------
 		s = 1  # step size
         	y = 0  # initial y height
         	for x in xrange(-n, n + 1, s):
@@ -180,24 +200,36 @@ class Model(object):
                 		self.add_block((x, y - 2, z), GRASS, immediate=False)
                 		self.add_block((x, y - 3, z), STONE, immediate=False)
 				self.add_block((x, y - 4, z), BEDROCK, immediate=False)
+		#"""
 
         # terrain generation
         main_octaves = 8
 	main_freq = 14.0*main_octaves
         main_base = 1# random.random()*101
+	
 	bedrock_octaves = 6
 	bedrock_freq = 2.0 * bedrock_octaves
 	bedrock_base = random.random()*101
+
+	biome_octaves = 4
+	biome_freq = 50.0*biome_octaves
+        biome_base = 1# random.random()*101
         	
         for z in xrange(-n, n + 1, 1):
         	for x in xrange(-n, n + 1, 1):
 			ypos = int(round(snoise2((x + main_base) / main_freq, (z + main_base) / main_freq, main_octaves) * 15 + 15))
 			bedrock_ypos = int(round(snoise2((x + main_base) / bedrock_freq, (z + main_base) / bedrock_freq, bedrock_octaves) * 2 - 1))
+			biome = int(round(snoise2((x + biome_base) / biome_freq, (z + biome_base) / biome_freq, biome_octaves) + 1))
+			block = GRASS
+			blockTwo = DIRT
+			if (biome == 0 or biome == 2):
+				block = SAND
+				blockTwo = SAND
 			if (TERRAIN_GEN):
-				self.add_block((x, ypos, z), GRASS, immediate=False)
+				self.add_block((x, ypos, z), block, immediate=False)
 				for main_yfill in xrange(-1, ypos, 1):
 					if (main_yfill > ypos/2):
-						self.add_block((x, main_yfill, z), DIRT, immediate=False)
+						self.add_block((x, main_yfill, z), blockTwo, immediate=False)
 					else:
 						self.add_block((x, main_yfill, z), STONE, immediate=False)
 				self.add_block((x, bedrock_ypos, z), BEDROCK, immediate=False)
